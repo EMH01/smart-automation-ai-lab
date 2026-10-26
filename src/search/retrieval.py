@@ -24,14 +24,14 @@ def search_documents(question: str, mode: str | None = None) -> list[dict]:
     options = {
         "search_text": question,
         "select": ["chunk_id", "title", "chunk"] if selected == "hybrid" else ["id", "title", "content"],
-        "top": 5 if selected == "hybrid" else 3,
+        "top": int(os.getenv("AZURE_SEARCH_TOP_K", "20")) if selected == "hybrid" else 3,
     }
     if selected == "hybrid":
         options["vector_queries"] = [
             VectorizableTextQuery(
                 text=question,
                 fields=os.getenv("AZURE_SEARCH_VECTOR_FIELD", "text_vector"),
-                k_nearest_neighbors=10,
+                k_nearest_neighbors=int(os.getenv("AZURE_SEARCH_VECTOR_K", "30")),
             )
         ]
     with SearchClient(endpoint=endpoint, index_name=index, credential=DefaultAzureCredential()) as client:
