@@ -218,3 +218,7 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Local datasets: keep archives and extracted PDFs out of Git
+/data/raw/
+/data/selected/
