@@ -6,7 +6,10 @@ from azure.identity import DefaultAzureCredential
 from azure.search.documents import SearchClient
 from azure.search.documents.indexes import SearchIndexClient
 from azure.search.documents.indexes.models import (
-    SearchIndex, SearchFieldDataType, SearchableField, SimpleField,
+    SearchableField,
+    SearchFieldDataType,
+    SearchIndex,
+    SimpleField,
 )
 from dotenv import load_dotenv
 
