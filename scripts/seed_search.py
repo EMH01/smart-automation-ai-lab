@@ -7,11 +7,15 @@ Run from repo root:
   python scripts/seed_search.py
 """
 import os
+from pathlib import Path
+from dotenv import load_dotenv
+
 from azure.identity import DefaultAzureCredential
 from azure.search.documents import SearchClient
 from azure.search.documents.indexes import SearchIndexClient
 from azure.search.documents.indexes.models import SearchIndex, SearchField, SearchFieldDataType, SimpleField, SearchableField
 
+load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 endpoint = os.environ["AZURE_SEARCH_ENDPOINT"]
 index_name = os.getenv("AZURE_SEARCH_INDEX", "hr-knowledge")
 credential = DefaultAzureCredential()
