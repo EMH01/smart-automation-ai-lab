@@ -1,6 +1,6 @@
 # Smart Automation AI Lab — Azure-first
 
-Hands-on engineering lab inspired by enterprise Payroll / HR automation requirements. **Not affiliated with SD Worx.** Uses fictional data only.
+Hands-on engineering lab inspired by enterprise Azure AI orchestration and automation. **Not affiliated with enterprise Azure AI.** Uses fictional data only.
 
 ## Architecture and learning objectives
 
@@ -26,7 +26,7 @@ py -3.12 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 pytest -q
-uvicorn app.main:app --reload
+uvicorn src.app.main:app --reload
 ```
 
 Browse http://127.0.0.1:8000/docs or /health. /ask returns 503 until Azure resources and RBAC are configured, by design.
