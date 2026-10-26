@@ -26,11 +26,15 @@ def test_keyword_retrieval(credential, client_type, monkeypatch):
 def test_hybrid_uses_managed_vectorization(credential, client_type, monkeypatch):
     monkeypatch.setenv("AZURE_SEARCH_ENDPOINT", "https://example.search.windows.net")
     monkeypatch.setenv("AZURE_SEARCH_VECTOR_INDEX", "hr-knowledge-vector")
+    monkeypatch.setenv("AZURE_SEARCH_TOP_K", "20")
+    monkeypatch.setenv("AZURE_SEARCH_VECTOR_K", "30")
     client = client_type.return_value.__enter__.return_value
     client.search.return_value = [{"chunk_id": "c1", "title": "contract.pdf", "chunk": "Some text"}]
     assert search_documents("solicitar días libres", mode="hybrid") == [{"id": "c1", "title": "contract.pdf", "content": "Some text"}]
     options = client.search.call_args.kwargs
     assert options["search_text"] == "solicitar días libres"
+    assert options["top"] == 20
+    assert options["vector_queries"][0].k_nearest_neighbors == 30
     assert options["vector_queries"][0].text == "solicitar días libres"
     assert options["vector_queries"][0].fields == "text_vector"
     assert client_type.call_args.kwargs["index_name"] == "hr-knowledge-vector"
