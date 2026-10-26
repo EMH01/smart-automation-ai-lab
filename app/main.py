@@ -7,6 +7,10 @@ import logging
 import os
 import time
 from uuid import uuid4
+from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
