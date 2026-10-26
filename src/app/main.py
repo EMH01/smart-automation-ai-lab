@@ -6,8 +6,9 @@ not a production payroll API. Protect ingress with Entra before real data.
 import logging
 import os
 import time
-from uuid import uuid4
 from pathlib import Path
+from uuid import uuid4
+
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
