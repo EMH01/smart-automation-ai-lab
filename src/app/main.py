@@ -9,10 +9,10 @@ import time
 from uuid import uuid4
 from pathlib import Path
 from dotenv import load_dotenv
-
-load_dotenv(Path(__file__).resolve().parents[2] / ".env")
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
+
+load_dotenv(Path(__file__).resolve().parents[2] / ".env")
 
 logger = logging.getLogger("hr_ai")
 app = FastAPI(title="Azure-first Smart Automation Lab", version="0.1.0")
