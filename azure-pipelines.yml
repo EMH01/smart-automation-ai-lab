@@ -1,0 +1,23 @@
+# Azure DevOps: import GitHub repo in Azure Pipelines to run this workflow.
+trigger:
+  branches:
+    include: [main]
+pr:
+  branches:
+    include: [main]
+pool:
+  vmImage: ubuntu-latest
+steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '3.12'
+  - script: |
+      python -m pip install --upgrade pip
+      pip install -r requirements.txt
+      ruff check app tests
+      pytest -q
+    displayName: "Lint and unit tests"
+  - script: docker build -t smart-automation:$(Build.BuildId) .
+    displayName: "Build container"
+# CD to Azure Container Apps requires a separately approved service connection
+# with workload identity federation, staging, smoke tests and approval gates.
