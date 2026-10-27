@@ -39,14 +39,11 @@ class ModelDecision(BaseModel):
 
 
 def _normalized(text: str) -> str:
-    """Normalize PDF whitespace, line wrapping and typographic quotes."""
-    text = unicodedata.normalize("NFKC", text).casefold()
-    text = text.translate(str.maketrans({
-        "“": '"', "”": '"', "„": '"', "‘": "'", "’": "'",
-        "‐": "-", "‑": "-", "–": "-", "—": "-",
-    }))
+    """Compare quotes despite PDF accents, punctuation and line wrapping."""
+    text = unicodedata.normalize("NFKD", text).casefold()
+    text = "".join(c for c in text if not unicodedata.combining(c))
     text = re.sub(r"-\s*\n\s*", "", text)
-    return re.sub(r"\s+", " ", text).strip()
+    return " ".join(re.findall(r"\w+", text))
 
 
 def validate_decision(
