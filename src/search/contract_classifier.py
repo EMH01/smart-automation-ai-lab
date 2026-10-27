@@ -26,6 +26,9 @@ class ContractDecision(BaseModel):
     evidence: str = Field(max_length=1200)
     source_chunk_id: str | None = None
     validation_issue: str | None = None
+    raw_model_status: Status | None = None
+    raw_model_evidence: str | None = None
+    raw_model_chunk_id: str | None = None
 
 
 class ModelDecision(BaseModel):
@@ -42,8 +45,8 @@ def _normalized(text: str) -> str:
         "“": '"', "”": '"', "„": '"', "‘": "'", "’": "'",
         "‐": "-", "‑": "-", "–": "-", "—": "-",
     }))
-    text = re.sub(r"-\\s*\\n\\s*", "", text)
-    return re.sub(r"\\s+", " ", text).strip()
+    text = re.sub(r"-\s*\n\s*", "", text)
+    return re.sub(r"\s+", " ", text).strip()
 
 
 def validate_decision(
@@ -55,6 +58,7 @@ def validate_decision(
             filename=filename, status=decision.status,
             justification=decision.justification, evidence="",
             source_chunk_id=None,
+            raw_model_status=decision.status,
         )
     quote = _normalized(decision.evidence)
     matches = [
@@ -75,12 +79,16 @@ def validate_decision(
             justification="La cita no pudo verificarse de forma inequívoca.",
             evidence="", source_chunk_id=None,
             validation_issue="QUOTE_NOT_VERIFIED",
+            raw_model_status=decision.status,
+            raw_model_evidence=decision.evidence,
+            raw_model_chunk_id=decision.source_chunk_id,
         )
     return ContractDecision(
         filename=filename, status=decision.status,
         justification=decision.justification,
         evidence=decision.evidence,
         source_chunk_id=source["id"],
+        raw_model_status=decision.status,
     )
 
 
