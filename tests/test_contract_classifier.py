@@ -56,3 +56,20 @@ def test_quote_failure_is_distinguishable_from_model_abstention():
         source_chunk_id="c1", justification="Supposed inclusion",
     ))
     assert result.validation_issue == "QUOTE_NOT_VERIFIED"
+
+
+def test_ocr_missing_accents_and_curly_quotes_pass():
+    chunks = [{
+        "id": "pages_1",
+        "content": "Se consideran casos de fuerza mayor: interrupcion de la cadena de suministro, embargos.",
+    }]
+    decision = ModelDecision(
+        status=Status.INCLUYE,
+        evidence="“Se consideran casos de fuerza mayor: interrupción de la cadena de suministro, embargos.”",
+        source_chunk_id="pages_1",
+        justification="Incluye interrupciones de suministro.",
+    )
+    checked = validate_decision("talleres.pdf", chunks, decision)
+    assert checked.status == Status.INCLUYE
+    assert checked.source_chunk_id == "pages_1"
+    assert checked.validation_issue is None
