@@ -5,7 +5,7 @@ inputs and explicit remote processing metadata without inventing cloud state.
 """
 import hashlib
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 
@@ -46,7 +46,7 @@ def record_processing(
         "document_id": document_id, "processor": processor,
         "status": status, "output_path": output_path,
         "details": details or {},
-        "recorded_at": datetime.now(timezone.utc).isoformat(),
+        "recorded_at": datetime.now(UTC).isoformat(),
     }
     events.append(entry)
     manifest_path.write_text(json.dumps(events, ensure_ascii=False, indent=2), encoding="utf-8")
