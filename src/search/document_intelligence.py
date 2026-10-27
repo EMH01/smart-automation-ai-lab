@@ -57,9 +57,8 @@ def analyze_layout(path: str | Path) -> dict:
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     with DocumentIntelligenceClient(
         endpoint=endpoint, credential=DefaultAzureCredential()
-    ) as client:
-        with path.open("rb") as pdf:
-            result = client.begin_analyze_document(
-                model_id="prebuilt-layout", body=pdf
-            ).result()
+    ) as client, path.open("rb") as pdf:
+        result = client.begin_analyze_document(
+            model_id="prebuilt-layout", body=pdf
+        ).result()
     return normalize_layout(result, filename=path.name)
