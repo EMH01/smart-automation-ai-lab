@@ -35,3 +35,24 @@ def test_abstention_does_not_fabricate_evidence():
     ))
     assert result.evidence == ""
     assert result.source_chunk_id is None
+
+
+def test_pdf_line_breaks_and_unicode_quotes_are_verified():
+    chunks = [{"id": "c2", "content": "La chaîne d’approvisionnement est\n expressément exclue."}]
+    result = validate_decision("a.pdf", chunks, ModelDecision(
+        status=Status.EXCLUYE,
+        evidence="La chaîne d'approvisionnement est expressément exclue.",
+        source_chunk_id="incorrect-id",
+        justification="Exclusión explícita.",
+    ))
+    assert result.status == Status.EXCLUYE
+    assert result.source_chunk_id == "c2"
+
+
+def test_quote_failure_is_distinguishable_from_model_abstention():
+    chunks = [{"id": "c1", "content": "Some other clause"}]
+    result = validate_decision("a.pdf", chunks, ModelDecision(
+        status=Status.INCLUYE, evidence="Imaginary supply agreement",
+        source_chunk_id="c1", justification="Supposed inclusion",
+    ))
+    assert result.validation_issue == "QUOTE_NOT_VERIFIED"
