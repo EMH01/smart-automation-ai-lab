@@ -10,14 +10,14 @@ The project already runs PDF ingestion (Blob + Azure AI Search integrated vector
 
 **Prerequisites:** An accessible Document Intelligence resource and `DOCUMENTINTELLIGENCE_ENDPOINT` in `.env`; a token identity with appropriate access to the resource. The endpoint is separate from Search and Foundry endpoints. Verify permissions with your organization's Azure administrator as applicable. Do not commit API keys.
 
-To run a single analysis manually, from repo root after installing dependencies and authenticating with `az login`:
+To run a single analysis on an existing local PDF, from the repository root:
 
 ```powershell
 python -m pip install -r requirements.txt
-python -c "from dotenv import load_dotenv; load_dotenv(); from src.search.document_intelligence import analyze_layout; import json; print(json.dumps(analyze_layout('data/selected/by_entity/YOUR_FILE.pdf'), ensure_ascii=False, indent=2))"
+python -m src.search.run_layout --input "data/selected/by_entity/<real-folder>/<real-file>.pdf"
 ```
 
-Replace the example path with the **real path to one of the selected PDFs**. If you do not yet have access to an existing DI resource, run only the offline tests; do not provision resources without first checking price, subscription approval, and region.
+Replace the example with a **real file path**. The command reads `.env`, sends one document to Azure and saves the result in `data/processed/<filename>.layout.json`. The `data/` folder is ignored by Git. **This is a paid cloud operation**: start with one document. The `DOCUMENTINTELLIGENCE_ENDPOINT` setting must point to an actual Document Intelligence instance, not to Azure AI Search or Foundry. If it is not set, use the Azure portal to check whether a suitable resource exists; the GitHub integration alone cannot inspect your Azure subscription. No resource has been provisioned automatically. If you do not yet have access to an existing DI resource, run only the offline tests; do not provision resources without first checking price, subscription approval, and region.
 
 ## Model refresher (specific to Document Intelligence)
 
