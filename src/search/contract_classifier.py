@@ -4,6 +4,8 @@ One model request per document. Pydantic validates structured responses and
 verifies the quoted evidence occurs in one of the supplied source chunks.
 """
 import os
+import re
+import unicodedata
 from enum import Enum
 
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
@@ -23,6 +25,7 @@ class ContractDecision(BaseModel):
     justification: str = Field(max_length=1000)
     evidence: str = Field(max_length=1200)
     source_chunk_id: str | None = None
+    validation_issue: str | None = None
 
 
 class ModelDecision(BaseModel):
@@ -32,34 +35,53 @@ class ModelDecision(BaseModel):
     source_chunk_id: str | None = None
 
 
-def validate_decision(filename: str, chunks: list[dict], decision: ModelDecision) -> ContractDecision:
-    """Reject an unsupported citation, abstaining instead of inventing evidence."""
+def _normalized(text: str) -> str:
+    """Normalize PDF whitespace, line wrapping and typographic quotes."""
+    text = unicodedata.normalize("NFKC", text).casefold()
+    text = text.translate(str.maketrans({
+        "“": '"', "”": '"', "„": '"', "‘": "'", "’": "'",
+        "‐": "-", "‑": "-", "–": "-", "—": "-",
+    }))
+    text = re.sub(r"-\\s*\\n\\s*", "", text)
+    return re.sub(r"\\s+", " ", text).strip()
+
+
+def validate_decision(
+    filename: str, chunks: list[dict], decision: ModelDecision
+) -> ContractDecision:
+    """Verify quote and chunk identity; distinguish unsupported from absent evidence."""
     if decision.status == Status.EVIDENCIA_INSUFICIENTE:
         return ContractDecision(
-            filename=filename,
-            status=Status.EVIDENCIA_INSUFICIENTE,
-            justification=decision.justification,
-            evidence="",
+            filename=filename, status=decision.status,
+            justification=decision.justification, evidence="",
             source_chunk_id=None,
         )
-    supporting = next(
-        (
-            chunk for chunk in chunks
-            if chunk["id"] == decision.source_chunk_id
-            and decision.evidence.strip()
-            and decision.evidence.strip() in chunk["content"]
-        ),
+    quote = _normalized(decision.evidence)
+    matches = [
+        chunk for chunk in chunks
+        if quote and len(quote) >= 15 and quote in _normalized(chunk["content"])
+    ]
+    # Permit a wrong or missing ID only when the quote uniquely identifies
+    # a chunk. Do not infer labels from benchmark ground truth.
+    source = next(
+        (chunk for chunk in matches if chunk["id"] == decision.source_chunk_id),
         None,
     )
-    if supporting is None:
+    if source is None and len(matches) == 1:
+        source = matches[0]
+    if source is None:
         return ContractDecision(
-            filename=filename,
-            status=Status.EVIDENCIA_INSUFICIENTE,
-            justification="No se pudo verificar la cita textual en el fragmento indicado.",
-            evidence="",
-            source_chunk_id=None,
+            filename=filename, status=Status.EVIDENCIA_INSUFICIENTE,
+            justification="La cita no pudo verificarse de forma inequívoca.",
+            evidence="", source_chunk_id=None,
+            validation_issue="QUOTE_NOT_VERIFIED",
         )
-    return ContractDecision(filename=filename, **decision.model_dump())
+    return ContractDecision(
+        filename=filename, status=decision.status,
+        justification=decision.justification,
+        evidence=decision.evidence,
+        source_chunk_id=source["id"],
+    )
 
 
 def classify_contracts(evidence: dict[str, list[dict]]) -> list[ContractDecision]:
