@@ -2,6 +2,16 @@
 
 Hands-on engineering lab inspired by enterprise Azure AI orchestration and automation. Uses fictional data only.
 
+## Project plan and progress
+
+- [Master plan](docs/MASTER_PLAN.md)
+- [Implementation tracker](docs/IMPLEMENTATION_TRACKER.md)
+- [Technology and use case roadmap](docs/AI_ML_LAB_ROADMAP.md)
+- [Web portal architecture](docs/WEB_PORTAL_ARCHITECTURE.md)
+- [Document lifecycle](docs/DOCUMENT_LIFECYCLE.md)
+
+The web portal, ML labs and event-driven systems are planned, not deployed. Next milestone: local React/TypeScript portal shell.
+
 ## Architecture and learning objectives
 
 1. **Microsoft Foundry:** model deployment, Agent Service, evaluation and safety.
