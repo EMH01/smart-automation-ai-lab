@@ -223,3 +223,6 @@ __marimo__/
 # Local datasets: keep archives and extracted PDFs out of Git
 /data/raw/
 /data/selected/
+
+# Local pytest basetemp on Windows
+.pytest_tmp/
