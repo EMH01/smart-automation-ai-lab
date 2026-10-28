@@ -23,11 +23,11 @@ function App() {
  const [search,setSearch]=useState("");
  const [selected,setSelected]=useState<Lab|null>(null);
  const [mobileOpen,setMobileOpen]=useState(false);
- const filtered=useMemo(()=>labs.filter(l=>(group==="Todos"||l.group===group)&&[`\u0024{l.name}`,l.id,l.description].join(" ").toLowerCase().includes(search.toLowerCase())),[group,search]);
+ const filtered=useMemo(()=>labs.filter(l=>(group==="Todos"||l.group===group)&&[`${l.name}`,l.id,l.description].join(" ").toLowerCase().includes(search.toLowerCase())),[group,search]);
  const navigation: {id:Section;label:string;icon:typeof Layers3}[]=[{id:"overview",label:"Overview",icon:Layers3},{id:"labs",label:"Laboratorios",icon:FlaskConical},{id:"workflows",label:"Casos de uso",icon:Workflow},{id:"roadmap",label:"Roadmap",icon:Blocks}];
  const change=(next:Section)=>{setSection(next);setMobileOpen(false);};
  return <div className="shell">
-   <aside className={`sidebar \u0024{mobileOpen?"visible":""}`}>
+   <aside className={`sidebar ${mobileOpen?"visible":""}`}>
      <div className="brand"><div className="brand-icon"><BrainCircuit size={23}/></div><div><strong>SMART AUTOMATION</strong><span>AI LAB <i> / AZURE</i></span></div></div>
      <div className="nav-label">WORKSPACE</div><nav aria-label="Navegación principal">{navigation.map(({id,label,icon:Icon})=><button key={id} className={section===id?"nav-item active":"nav-item"} onClick={()=>change(id)}><Icon size={18}/>{label}<ChevronRight size={15} className="nav-arrow"/></button>)}</nav>
      <div className="side-bottom"><div className="side-indicator"><span className="live-dot"/> MODO DEMOSTRACIÓN</div><p>Catálogo informativo. Ningún servicio de Azure se ejecuta desde esta interfaz.</p><a href="https://github.com/EMH01/smart-automation-ai-lab" target="_blank" rel="noreferrer"><Github size={16}/> Repositorio GitHub <ArrowUpRight size={14}/></a></div>
@@ -42,6 +42,6 @@ function App() {
    {selected?<div className="modal-backdrop" onClick={()=>setSelected(null)}><section className="modal" role="dialog" aria-modal="true" aria-label={selected.name} onClick={e=>e.stopPropagation()}><button aria-label="Cerrar" className="close" onClick={()=>setSelected(null)}><X size={20}/></button><span className="overline">{selected.id} · {selected.group}</span><h2>{selected.name}</h2><Status status={selected.status}/><p>{selected.description}</p><div className="modal-note"><strong>Estado verificado</strong><p>{selected.detail}</p></div><a href={DOCS+"AI_ML_LAB_ROADMAP.md"} target="_blank" rel="noreferrer">Consultar alcance técnico <ArrowUpRight size={14}/></a></section></div>:null}
  </div>;
 }
-function Status({status}:{status:LabStatus}){return <span className={`status s-\u0024{status.toLowerCase()}`}><span/>{labels[status]}</span>}
+function Status({status}:{status:LabStatus}){return <span className={`status s-${status.toLowerCase()}`}><span/>{labels[status]}</span>}
 function LabCard({lab,onClick}:{lab:Lab;onClick:()=>void}){return <button className="lab-card" onClick={onClick}><div className="card-top"><span className="lab-id">{lab.id}</span><Status status={lab.status}/></div><div className="lab-graphic"><BrainCircuit size={28} strokeWidth={1.4}/></div><h3>{lab.name}</h3><p>{lab.description}</p><div className="card-bottom">{lab.group}<ArrowUpRight size={17}/></div></button>}
 export default App;
