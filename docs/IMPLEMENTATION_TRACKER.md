@@ -24,8 +24,8 @@
 
 ## Phase 2 — Build web portal locally
 
-- [ ] UI-01 scaffold React/TypeScript and responsive navigation
-- [ ] UI-01 lab catalog drawn from a typed manifest (IMPLEMENTED / EXPERIMENTAL / STUDIO_ONLY / PLANNED)
+- [x] UI-01 scaffold React/TypeScript and responsive navigation (code added; local npm build verification pending)
+- [x] UI-01 lab catalog drawn from a typed manifest (IMPLEMENTED / EXPERIMENTAL / STUDIO_ONLY / PLANNED; local build verification pending)
 - [ ] UI-02 technology pages and explanatory data-flow diagrams
 - [ ] UI-03 benchmark dashboard from precomputed, versioned runs
 - [ ] API contracts and security review for existing FastAPI
