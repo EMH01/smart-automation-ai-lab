@@ -59,3 +59,25 @@ The helper `record_processing` in `src/search/corpus_registry.py` can append pro
 - **Event-driven production architecture:** planned, not implemented.
 
 Do not represent the experimental scripts as an end-to-end production workflow. Do not commit private, personal or copyrighted documents, secrets, access tokens, or local extraction outputs.
+
+## Read-only reconciliation: local vs Blob vs Search
+
+Add these non-secret values to your local `.env` (do not commit it):
+
+```dotenv
+AZURE_STORAGE_ACCOUNT_URL=https://resourcesemhbe8a.blob.core.windows.net
+AZURE_STORAGE_CONTAINER=smart-ai-lab-docs
+```
+
+The existing `AZURE_SEARCH_ENDPOINT` and `AZURE_SEARCH_VECTOR_INDEX` are reused.
+
+```powershell
+pip install -r requirements.txt
+python -m src.search.audit_corpus
+```
+
+The command uses `DefaultAzureCredential` and **read-only** listing/query operations. Your Entra principal needs permissions to list blobs (for example **Storage Blob Data Reader**) and query the Search index (for example **Search Index Data Reader**). Azure portal owner/contributor roles alone may not grant data-plane reads.
+
+Results are saved locally in `data/processed/corpus_audit.json` and compared by filename. A duplicate filename is flagged; matching filenames **do not establish matching PDF bytes**. Search counts correspond to indexed chunks, not original files. This command does not examine DI/CU Studio, and does not modify Azure resources.
+
+If access is denied, check the data-plane role assignments rather than adding secrets to source control.
