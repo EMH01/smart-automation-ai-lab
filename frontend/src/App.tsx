@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { ArrowUpRight, BrainCircuit, Blocks, CheckCircle2, ChevronRight, Cloud, Code2, FileText, FlaskConical, Github, Layers3, Menu, Search, ShieldCheck, Workflow, X } from "lucide-react";
+import { ArrowUpRight, BrainCircuit, Blocks, ChevronRight, Cloud, Code2, FileText, FlaskConical, Github, Layers3, Menu, Search, ShieldCheck, Workflow, X } from "lucide-react";
 import { labs, type Lab, type LabStatus } from "./labs";
 
 const DOCS = "https://github.com/EMH01/smart-automation-ai-lab/blob/feat/retrieval-coverage/docs/";
